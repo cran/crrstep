@@ -10,8 +10,8 @@ Performs forward and backward stepwise regression for the Fine & Gray regression
 \tabular{ll}{
 Package: \tab crrstep\cr
 Type: \tab Package\cr
-Version: \tab 2012-05.02\cr
-Date: \tab 2012-05-02\cr
+Version: \tab 2012-8.13\cr
+Date: \tab 2012-08-13\cr
 License: \tab GPL (version 2)\cr
 LazyLoad: \tab yes\cr
 }

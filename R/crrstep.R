@@ -191,6 +191,7 @@ nomiss <- apply(Xmat, 1, function(x) !any(is.na(x)))
 data <- data[nomiss, ]
 ftime <- Xmat[nomiss ,1]
 fstatus <- eval(substitute(etype), data)
+fstatus <- fstatus[nomiss]
 criterion <- match.arg(criterion, choices=c("AIC", "BICcr", "BIC"))
 if (criterion == "AIC") k <- 2
 if (criterion == "BICcr") k <- log(sum(fstatus == 1))

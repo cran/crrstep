@@ -27,7 +27,7 @@ variables passed to `crr' function; two key variables are \emph{failcode} and \e
 subset of data to be used for model selection.
 }
   \item{data}{
-data-frame containing all the variables.
+data-frame containing all the variables. Only complete cases are used in the analysis, i.e. rows of dataframe with missing values in any of the predictors are deleted.
 }
   \item{direction}{
 forward or backward direction for model selection.
