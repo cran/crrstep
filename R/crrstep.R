@@ -211,7 +211,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
     formula <- scope.max
     cov1 <- crr.makecov1(formula = formula, data = data)[, -1, 
         drop = FALSE]
-    object <- crr.fast(ftime, fstatus, cov1, ...)
+    object <- crr.fast(ftime, fstatus, cov1, variance=TRUE, ...)
     fit <- object
     if (backward) 
         cov3.2 <- cov1
