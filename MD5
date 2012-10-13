@@ -1,5 +1,6 @@
-fd61374ba2ed93d18fc4a9c279628a86 *DESCRIPTION
+af31e3da3841eb0d092c63033d06e21f *DESCRIPTION
 9312fd50a1e7d689e9c2ed458ba9ef40 *NAMESPACE
-a5ae28a8f4cee2c7e4b94547548435d0 *R/crrstep.R
-8428af311128cbbb7af30b83d0468868 *man/crrstep-package.Rd
-659c0f2f0a6387434407d5b4b9c12375 *man/crrstep.Rd
+b32e2415e2e8eea7dbcbff54bf1ac559 *R/crrfast.r
+c4e2c505bde1ae6836523b87c0a76780 *R/crrstep.r
+50c70956a9f96ac413579fda548e886e *man/crrstep-package.Rd
+db33c2bf164ce9c238805ea40482c70b *man/crrstep.Rd

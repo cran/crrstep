@@ -2,8 +2,8 @@ Package: crrstep
 Type: Package
 Title: Stepwise covariate selection for the Fine & Gray competing risks
         regression model
-Version: 2012-8.13
-Date: 2012-08-13
+Version: 2012-10.13
+Date: 2012-10-13
 Author: Ravi Varadhan & Deborah Kuk
 Maintainer: Ravi Varadhan <rvaradhan@jhmi.edu>
 Description: Performs forward and backwards stepwise regression for the
@@ -14,6 +14,6 @@ Description: Performs forward and backwards stepwise regression for the
 Depends: cmprsk
 License: GPL (>= 2)
 LazyLoad: yes
-Packaged: 2012-08-13 20:09:21 UTC; rvaradh1
+Packaged: 2012-10-16 13:51:38 UTC; rvaradh1
 Repository: CRAN
-Date/Publication: 2012-08-14 07:28:42
+Date/Publication: 2012-10-17 11:30:53

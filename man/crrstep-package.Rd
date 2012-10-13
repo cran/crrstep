@@ -10,8 +10,8 @@ Performs forward and backward stepwise regression for the Fine & Gray regression
 \tabular{ll}{
 Package: \tab crrstep\cr
 Type: \tab Package\cr
-Version: \tab 2012-8.13\cr
-Date: \tab 2012-08-13\cr
+Version: \tab 2012-10.13\cr
+Date: \tab 2012-10-13\cr
 License: \tab GPL (version 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -34,8 +34,8 @@ for censored survival models. \emph{Biometrics}.
 %~~ the R documentation directory ~~
 %\keyword{package}
 \examples{
-library(cmprsk)
-n <- 200
+set.seed(123)
+n <- 500
 ftime <- rexp(n)
 fstatus <- sample(0:2,n,replace=TRUE)
 cov1 <- matrix(runif(5*n),nrow=n)
@@ -44,5 +44,9 @@ x71 <- as.factor(sample(5, size=n, rep = TRUE))
 cov1 <- cbind(cov1, x61, x71)
 dimnames(cov1)[[2]] <- c('x1','x2','x3','x4','x5', 'x6', 'x7')
 formula1 <- ftime ~ 1 + x1 + x2 + x3 + x4 + x5 + as.factor(x6) + as.factor(x7) 
+
 crrstep(formula1, , fstatus, data = as.data.frame(cov1), direction = "backward", criterion = "BIC")
+
+crrstep(formula1, , fstatus, data = as.data.frame(cov1), direction = "backward", criterion = "AIC")
+
 }
