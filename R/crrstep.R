@@ -36,7 +36,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
                 scope), "AIC"))
             cnames2 <- attributes(cov1)$assign
             cov1.2 <- cov1
-            init <- crr.fast(ftime, fstatus, cov1.2, ...)
+            init <- crr(ftime, fstatus, cov1.2, variance=FALSE, ...)
             ans[1, ] <- crr.extractAIC(init, cov1.2, k)
             if (ncol(cov1.2) == 0) {
                 ans[1, ] <- -2 * init$loglik.null
@@ -58,10 +58,10 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
                   if (ncol(cov1.3) == 0) {
                     ans[i + 1, ] <- round(-2 * init$loglik.null, 
                       2)
-                    object2 <- crr.fast(ftime, fstatus, cov1.2, ...)
+                    object2 <- crr(ftime, fstatus, cov1.2, variance=FALSE, ...)
                   }
                   else {
-                    object2 <- crr.fast(ftime, fstatus, cov1.3, ...)
+                    object2 <- crr(ftime, fstatus, cov1.3, variance=FALSE, ...)
                     ans[i + 1, ] <- crr.extractAIC(object2, cov1.3, 
                       k)
                   }
@@ -73,7 +73,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
             ns.new <- length(scope.new2)
             ans <- matrix(nrow = ns.new + 1, ncol = 1, dimnames = list(c("<none>", 
                 scope.new2), "AIC"))
-            init <- crr.fast(ftime, fstatus, cov1, ...)
+            init <- crr(ftime, fstatus, cov1, variance=FALSE, ...)
             ans[1, ] <- crr.extractAIC(init, cov1, k)
             cov1.2 <- cov1
             for (i in seq(length(scope.new2))) {
@@ -88,7 +88,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
                 }
                 cov1.3 <- cov1.2[, -c(grep(remove.x, colnames(cov1.2))), 
                   drop = FALSE]
-                object2 <- crr.fast(ftime, fstatus, cov1.3, ...)
+                object2 <- crr(ftime, fstatus, cov1.3, variance=FALSE, ...)
                 ans[i + 1, ] <- crr.extractAIC(object2, cov1.3, 
                   k)
             }
@@ -127,12 +127,12 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
                 scope), "AIC"))
             cnames2 <- attributes(cov1)$assign
             cov1.2 <- cov1
-            init <- crr.fast(ftime, fstatus, cov1, ...)
+            init <- crr(ftime, fstatus, cov1, variance=FALSE, ...)
             ans[1, ] <- round(-2 * init$loglik.null, 2)
             for (i in seq(ns)) {
                 add.x <- (1:length(cnames2))[cnames2 == i]
                 cov1.3 <- cov1.2[, c(add.x), drop = FALSE]
-                object2 <- crr.fast(ftime, fstatus, cov1.3, ...)
+                object2 <- crr(ftime, fstatus, cov1.3, variance=FALSE, ...)
                 ans[i + 1, ] <- crr.extractAIC(object2, cov1.3, 
                   k)
             }
@@ -142,7 +142,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
             ns.new <- length(scope.new2)
             ans <- matrix(nrow = ns.new + 1, ncol = 1, dimnames = list(c("<none>", 
                 scope.new2), "AIC"))
-            init <- crr.fast(ftime, fstatus, cov11, ...)
+            init <- crr(ftime, fstatus, cov11, variance=FALSE, ...)
             ans[1, ] <- crr.extractAIC(init, cov11, k)
             cov1.2 <- cov1
             for (i in seq(length(scope.new2))) {
@@ -159,7 +159,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
                   colnames(cov1.2)))])
                 colnames(cov1.3) <- c(colnames(cov11), colnames(cov1.2)[c(grep(add.x, 
                   colnames(cov1.2)))])
-                object2 <- crr.fast(ftime, fstatus, cov1.3, ...)
+                object2 <- crr(ftime, fstatus, cov1.3, variance=FALSE, ...)
                 ans[i + 1, ] <- crr.extractAIC(object2, cov1.3, 
                   k)
             }
@@ -211,7 +211,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
     formula <- scope.max
     cov1 <- crr.makecov1(formula = formula, data = data)[, -1, 
         drop = FALSE]
-    object <- crr.fast(ftime, fstatus, cov1, variance=TRUE, ...)
+    object <- crr(ftime, fstatus, cov1, variance=TRUE, ...)
     fit <- object
     if (backward) 
         cov3.2 <- cov1
