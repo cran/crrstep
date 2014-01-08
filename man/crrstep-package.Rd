@@ -10,8 +10,8 @@ Performs forward and backward stepwise regression for the Fine & Gray regression
 \tabular{ll}{
 Package: \tab crrstep\cr
 Type: \tab Package\cr
-Version: \tab 2012-10.13\cr
-Date: \tab 2012-10-13\cr
+Version: \tab 2014-01.08\cr
+Date: \tab 2014-01.08\cr
 License: \tab GPL (version 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -27,8 +27,12 @@ Fine, J. P. and Gray, R. J. (1999). A proportional hazards model for
 the subdistribution of a competing risk. \emph{Journal of the American Statistical
 Association}.
 
+
 Volinsky, C. T. and Raftery, A. E. (2000). Bayesian information criterion
 for censored survival models. \emph{Biometrics}.
+
+
+Kuk, D. and Varadhan, R. (2013). Model selection in competing risks regression. \emph{Statistics in Medicine}. 
 }
 %~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
 %~~ the R documentation directory ~~
@@ -46,7 +50,9 @@ dimnames(cov1)[[2]] <- c('x1','x2','x3','x4','x5', 'x6', 'x7')
 formula1 <- ftime ~ 1 + x1 + x2 + x3 + x4 + x5 + as.factor(x6) + as.factor(x7) 
 
 crrstep(formula1, , fstatus, data = as.data.frame(cov1), direction = "backward", criterion = "BIC")
-
 crrstep(formula1, , fstatus, data = as.data.frame(cov1), direction = "backward", criterion = "AIC")
 
+ans2 <- crrstep(formula1, , fstatus, data = as.data.frame(cov1), direction = "forward", 
+		failcode=2, criterion = "AIC")
+ans2
 }
