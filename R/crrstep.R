@@ -1,3 +1,5 @@
+### 7/15/14
+## make change to backward selection; it seems to stop and suggest null model when more variables need to be removed 
 crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
     direction = c("backward", "forward"), criterion = c("AIC",
         "BICcr", "BIC"), crr.object = FALSE, trace = TRUE, steps = 100)
@@ -242,10 +244,10 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
             if (trace) {
                 print(aod.o)
                 utils::flush.console()
-            }
-            if (o[1] == 1) {
+            } 
+            if (o[1] == 1) { 
                 std.error <- rep(0, ncol(cov3.2))
-				fit <- update(object, cov1 = cov3.2, variance = TRUE) #DK added this
+				fit <- update(object, cov1 = cov3.2, variance = TRUE) 
                 for (i in 1:ncol(cov3.2)) {
                   std.error[i] <- sqrt(fit$var[i, i])
                 }
@@ -267,25 +269,21 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
             var0 <- grep("\\(*\\)", var)
             if (length(var0) == 0)
                 var <- var
-            #else if (length(var0) > 0) { #if var is as.factor(x), then length (var0) = 1
-            #    var1 <- gsub("\\(", "\\\\\\(", var)
-            #    var1 <- gsub("\\)", "\\\\\\)", var1)
-            #    var <- var1
-            #}
-#            ans <- sub(paste("\\+ ", var, sep = ""), "", formula)
-#            formula <- as.formula(paste(ans[1], ans[2], sep = ""))
-			var2 <- sub("as.factor\\(", "", var)
+          	var2 <- sub("as.factor\\(", "", var)
 			var2 <- sub("\\)", "", var2)
             varpos <- match(var2,all.vars(formula))
-            #formula <- formula(drop.terms(terms(formula),dropx=varpos))
-			#formula <- formula(drop.terms(terms(formula),dropx=varpos-1))
+            
             if (!is.na(var2)) { #if there is a variable to remove
-                #formula <- formula(drop.terms(terms(formula),dropx=varpos))
-				cov3.2 <- cov3.2[, -c(grep(var2, colnames(cov3.2))),
-                  drop = FALSE]
+            	
+				if (length(attr(terms(formula),"variables")) == 2)  { 
+					formula <- ~1
+				} else {
+					formula <- formula(drop.terms(terms(formula),dropx=varpos))
+				} #added on 7/16 because if there is only one variable remaining and it is removed
+				# you get an error when you drop that variable in the line below
+				cov3.2 <- crr.makecov1(formula = formula, data = data)[,-1, drop = FALSE] # added this line on 7/15/14
                 if (ncol(cov3.2) != 0) {
-				  formula <- formula(drop.terms(terms(formula),dropx=varpos))
-                  fit <- update(object, cov1 = cov3.2, variance = TRUE)
+				  fit <- update(object, cov1 = cov3.2, variance = TRUE)
                   std.error <- rep(0, ncol(cov3.2))
                   for (i in 1:ncol(cov3.2)) {
                     std.error[i] <- sqrt(fit$var[i, i])
@@ -405,17 +403,16 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
             print(var)
             var0 <- grep("\\(*\\)", var)
             if (length(var0) == 0)
-                var1 <- var
-            else if (length(var0) > 0) {
-                var1 <- gsub("\\(", "\\\\\\(", var)
-                var1 <- gsub("\\)", "\\\\\\)", var1)
-            }
+			                
+				var <- var
+            
+			var2 <- sub("as.factor\\(", "", var)
+			var2 <- sub("\\)", "", var2)
             ans <- paste("+", var, sep = "")
             formula1 <- as.formula(paste(scope.min[1], scope.min[2],
                 ans, sep = ""))
             scope.min <- formula1
-            cov2 <- cbind(cov2, cov1[, c(pmatch(var1, colnames(cov1))),
-                drop = FALSE])
+          	cov2 <- crr.makecov1(scope.min, data)[,-1, drop = FALSE]
             fit <- update(object, cov1 = cov2, variance = TRUE)
             vars.in <- c(vars.in, var)
             std.error <- rep(0, ncol(cov2))
