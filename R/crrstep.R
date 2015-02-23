@@ -1,16 +1,20 @@
-### 7/15/14
-## make change to backward selection; it seems to stop and suggest null model when more variables need to be removed 
+### 2/23/15
+## Fixed a couple of bugs in processing `scope.min'
+## Fixed a bug related to returning output
 crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
     direction = c("backward", "forward"), criterion = c("AIC",
         "BICcr", "BIC"), crr.object = FALSE, trace = TRUE, steps = 100)
 {
+####
     crr.extractAIC <- function(object, cov1, k = 2) {
         round(-2 * object$loglik + k * ncol(cov1), 2)
     }
+####
     crr.makecov1 <- function(formula, data) {
         cov1 <- model.matrix(formula, data = as.data.frame(data))
         return(cov1)
     }
+####
     crr.dropterm <- function(scope.max, scope.min, ftime, fstatus,
         data, ...) {
         Terms <- terms(scope.max)
@@ -102,6 +106,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
         attr(aod, "heading") <- head
         aod
     }
+####
     crr.addterm <- function(scope.max, scope.min, ftime, fstatus,
         data, ...) {
         Terms <- terms(scope.max)
@@ -180,6 +185,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
             string[-1] <- paste("\n", string[-1], sep = "")
         string
     }
+#####
     stopifnot(identical(formula[[1]], as.name("~")))
     lhs <- if (length(formula) == 3)
         formula[[2]]
@@ -189,6 +195,10 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
     scope.min <- if (length(scope.min) == 3)
         as.formula(scope.min[-2])
     else as.formula(scope.min)
+    fvars <- sort(attr(terms(formula), "term.labels"))
+    svars <- sort(attr(terms(scope.min), "term.labels"))
+    if (length(svars) > length(fvars)) stop("`scope.min' contains more variables than `formula'")
+    if (!all(svars %in% fvars)) stop("`scope.min' contains variables not in `formula'")
     data <- data[subset, ]
     Xmat <- model.frame(formula, data, na.action = na.pass)
     nomiss <- apply(Xmat, 1, function(x) !any(is.na(x)))
@@ -217,6 +227,17 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
         drop = FALSE]
     object <- crr(ftime, fstatus, cov1 = cov1, variance = TRUE, ...)
     fit <- object
+    if (identical(fvars, svars)) {
+                    std.error <- sqrt(diag(fit$var))
+      outmat <- cbind(signif(fit$coef, 3), signif(std.error,
+                  3), signif(abs(fit$coef)/std.error, 3))
+                colnames(outmat) <- c("estimate", "std.error",
+                  "t-stat")
+                rownames(outmat) <- colnames(cov1)
+                   if (crr.object) return(fit) else
+    return(list(coefficients = outmat, log.likelihood = round(fit$loglik,
+        2)))
+    }
     if (backward)
         cov3.2 <- cov1
     if (forward) {
@@ -229,7 +250,8 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
         aod <- NULL
         change <- NULL
         if (backward) {
-            if (formula == scope.min)
+     if (identical(sort(attr(terms(formula), "term.labels")), 
+        sort(attr(terms(scope.min), "term.labels"))))
                 break
             if (ncol(cov3.2) == 0)
                 break
@@ -246,11 +268,8 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
                 utils::flush.console()
             } 
             if (o[1] == 1) { 
-                std.error <- rep(0, ncol(cov3.2))
 				fit <- update(object, cov1 = cov3.2, variance = TRUE) 
-                for (i in 1:ncol(cov3.2)) {
-                  std.error[i] <- sqrt(fit$var[i, i])
-                }
+                  std.error <- sqrt(diag(fit$var))
                 output <- list(variables = colnames(cov3.2),
                   coefficients = fit$coef, `std. errors` = std.error,
                   log.lik = round(fit$loglik, 2))
@@ -284,10 +303,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
 				cov3.2 <- crr.makecov1(formula = formula, data = data)[,-1, drop = FALSE] # added this line on 7/15/14
                 if (ncol(cov3.2) != 0) {
 				  fit <- update(object, cov1 = cov3.2, variance = TRUE)
-                  std.error <- rep(0, ncol(cov3.2))
-                  for (i in 1:ncol(cov3.2)) {
-                    std.error[i] <- sqrt(fit$var[i, i])
-                  }
+                    std.error <- sqrt(diag(fit$var))
                   output <- list(variables = colnames(cov3.2),
                     coefficients = fit$coef, `std. errors` = std.error,
                     log.lik = round(fit$loglik, 2))
@@ -312,10 +328,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
                   drop = FALSE]
                 if (ncol(cov3.2) != 0) {
                   fit <- update(object, cov1 = cov3.2, variance = TRUE)
-                  std.error <- rep(0, ncol(cov3.2))
-                  for (i in 1:ncol(cov3.2)) {
-                    std.error[i] <- sqrt(fit$var[i, i])
-                  }
+                    std.error <- sqrt(diag(fit$var))
                   output <- list(variables = colnames(cov3.2),
                     coefficients = fit$coef, `std. errors` = std.error,
                     log.lik = round(fit$loglik, 2))
@@ -346,6 +359,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
                 utils::flush.console()
             }
         }
+###
         if (forward) {
             aod <- crr.addterm(formula, formula1, ftime, fstatus,
                 data, ...)
@@ -374,14 +388,16 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
                   cov3.1 <- crr.makecov1(formula1, data)[, -1,
                     drop = FALSE]
                   fit <- update(object, cov1 = cov3.1, variance = TRUE)
-                  std.error <- rep(0, ncol(cov3.1))
-                  for (i in 1:ncol(cov3.1)) {
-                    std.error[i] <- sqrt(fit$var[i, i])
-                  }
-                  output <- list(variables = colnames(cov3.1),
-                    coefficients = fit$coef, std.errors = std.error,
-                    log.lik = round(fit$loglik, 2))
-                }
+                    std.error <- sqrt(diag(fit$var))
+ #                 output <- list(variables = colnames(cov3.1),
+ #                   coefficients = fit$coef, std.errors = std.error,
+ #                   log.lik = round(fit$loglik, 2))
+               outmat <- cbind(signif(fit$coef, 3), signif(std.error,
+                  3), signif(abs(fit$coef)/std.error, 3))
+                colnames(outmat) <- c("estimate", "std.error",
+                  "t-stat")
+                rownames(outmat) <- colnames(cov3.1)
+                 }
                 else {
                   null.output <- paste("The best model is the NULL model and the likelihood is:",
                     round(fit$loglik.null, 2), sep = "")
@@ -394,9 +410,11 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
                       2))
                   outmat <- NULL
                   fit$loglik <- fit2$loglik.null
-                }
-                break
-            }
+                 }
+                return(list(coefficients = outmat, log.likelihood = round(fit$loglik,
+                2)))
+             break
+             }
             change <- rownames(aod)[o[1]]
             s.split <- strsplit(change, "\\+")
             var <- s.split[[1]][2]
@@ -415,10 +433,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
           	cov2 <- crr.makecov1(scope.min, data)[,-1, drop = FALSE]
             fit <- update(object, cov1 = cov2, variance = TRUE)
             vars.in <- c(vars.in, var)
-            std.error <- rep(0, ncol(cov2))
-            for (i in 1:ncol(cov2)) {
-                std.error[i] <- sqrt(fit$var[i, i])
-            }
+                    std.error <- sqrt(diag(fit$var))
             output <- list(variables = NULL, coefficients = NA,
                 `std. errors` = NA, log.lik = round(fit$loglik.null,
                   2))
@@ -437,7 +452,7 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
             scope <- sort(scope)
             scope1 <- sort(scope1)
             scope.new2 <- scope[!(scope %in% scope1)]
-            if (length(scope.new2) == 0)
+             if (length(scope.new2) == 0)
                 break
             if (trace) {
                 cat("\nStep: ", criterion, "= ", format(round(crr.extractAIC(fit,
@@ -447,10 +462,15 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
             }
         }
     }
-    if (crr.object)
-        return(fit)
-    cat("\n")
+    if (trace) {
+	cat("\n")
     print(list(coefficients = outmat, log.likelihood = round(fit$loglik,
         2)))
+}
+    if (crr.object)
+        return(fit) else
+    return(list(coefficients = outmat, log.likelihood = round(fit$loglik,
+        2)))
+
 }
 

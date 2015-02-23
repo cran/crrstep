@@ -73,8 +73,6 @@ Ravi Varadhan & Deborah Kuk.
 \code{\link{crr}}
 }
 \examples{
-library(cmprsk)
-
 set.seed(123)
 n <- 500
 ftime <- rexp(n)
