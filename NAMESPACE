@@ -1,2 +1,4 @@
 export("crrstep")
 import(cmprsk)
+importFrom("stats", "as.formula", "drop.terms", "model.frame",
+               "model.matrix", "na.pass", "terms", "update")
