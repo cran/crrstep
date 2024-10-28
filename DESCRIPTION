@@ -2,15 +2,23 @@ Package: crrstep
 Type: Package
 Title: Stepwise Covariate Selection for the Fine & Gray Competing Risks
         Regression Model
-Version: 2023.1.1
-Date: 2023-08-21
-Author: Ravi Varadhan & Deborah Kuk
-Maintainer: Ravi Varadhan <ravi.varadhan@jhu.edu>
+Version: 2024.1.1
+Date: 2024-10-27
+Authors@R: c(person(given = "Ravi", family = "Varadhan",
+                      role = c("aut", "cre"), email="ravi.varadhan@jhu.edu"),
+               person(given = "Deborah",
+                      family = "Kuk",
+                      role = "aut"),
+            person(given="Leon", family="Wang", role="ctb"))
 Description: Performs forward and backwards stepwise regression for the Proportional subdistribution hazards model in competing risks (Fine & Gray 1999). Procedure uses AIC, BIC and BICcr as selection criteria. BICcr has a penalty of k = log(n*), where n* is the number of primary events.
 Depends: cmprsk
 License: GPL (>= 2)
 LazyLoad: yes
-Packaged: 2023-08-22 14:44:40 UTC; rvaradh1
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2023-08-22 21:40:10 UTC
+Packaged: 2024-10-28 00:49:32 UTC; raviv
+Author: Ravi Varadhan [aut, cre],
+  Deborah Kuk [aut],
+  Leon Wang [ctb]
+Maintainer: Ravi Varadhan <ravi.varadhan@jhu.edu>
+Date/Publication: 2024-10-28 05:10:02 UTC

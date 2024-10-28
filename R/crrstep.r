@@ -288,9 +288,13 @@ crrstep <- function (formula, scope.min = ~1, etype, ..., subset, data,
             var0 <- grep("\\(*\\)", var)
             if (length(var0) == 0)
                 var <- var
-          	var2 <- sub("as.factor\\(", "", var)
-			var2 <- sub("\\)", "", var2)
-            varpos <- match(var2,all.vars(formula))
+          	
+            #var2 <- sub("as.factor\\(", "", var)
+			      #var2 <- sub("\\)", "", var2)
+            #varpos <- match(var2,all.vars(formula))
+            
+            var2 <- var
+            varpos <- match(var2, attr(terms(formula), "term.labels"))
             
             if (!is.na(var2)) { #if there is a variable to remove
             	

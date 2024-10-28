@@ -70,8 +70,9 @@ Ravi Varadhan & Deborah Kuk.
 }
 
 \seealso{
-\code{\link{crr}}
+\code{\link[cmprsk]{crr}}
 }
+
 \examples{
 set.seed(123)
 n <- 500
@@ -90,6 +91,11 @@ ans2 <- crrstep(formula1, , fstatus, data = as.data.frame(cov1), direction = "fo
 		failcode=2, criterion = "AIC")
 ans2
 
+formula.int <- ftime ~ x1 + x2 + x3 + x4 + x4*as.factor(x6) + x5*as.factor(x7) 
+ans3 <- crrstep(formula.int, , fstatus, data = as.data.frame(cov1), 
+  direction = "backward", criterion = "AIC")
+
+print(ans3)
 }
 \keyword{stepwise}
 \keyword{competing risks}
